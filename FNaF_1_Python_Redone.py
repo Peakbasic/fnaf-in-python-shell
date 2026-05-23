@@ -3,6 +3,7 @@ import sys,time,random,os,random
 def cls():
     os.system('cls' if os.name == 'nt' else 'clear')
 
+
 def Intro():
     global bonnieai, chicaai, foxyai, freddyai
     slow_print_1("FNaF 1 in Python 3.4.3\n")
@@ -11,6 +12,8 @@ def Intro():
     slow_print_1("Adapted by Peakbasic\nOriginal Game by Scott Cawthon\n")
     time.sleep(2)
     move = input("Press enter to play, or 'edit ai' to edit ai values\n>>> ")
+
+    # Custom Night functionality
     if move.lower() == "edit ai":
         while True:
             try:
@@ -19,6 +22,7 @@ def Intro():
                 freddyai = int(input("Enter Freddy's's AI\n>>> "))
                 foxyai = int(input("Enter Foxy's AI\n>>> "))
                 break
+                
             except ValueError:
                 print("AI value must be an integer.\nAny integer above 20 will be set to 20\n")
     slow_print_2("\n - - - N I G H T   6 - - - ")
@@ -28,6 +32,8 @@ ldoor = False
 rdoor = False
 gotyou = False
 alive = True
+
+# The Mercy timers were due to bonnie & chica instantly killing the player when playtesting.
 bonmercytimer = 0
 chimercytimer = 0
 
@@ -46,11 +52,12 @@ End_of_Night = False
 fredinhall = False
 action = ""
 camera = ""
-# List of cameras
 
+# Haven't implemented a power system yet
 ldoorpenalty = 50
 rdoorpenalty = 50
 
+# Camera list
 cam_1a = ["Freddy", "Bonnie", "Chica"]
 cam_1b = []
 foxystage = 0 # Cam 1c - Pirates Cove
@@ -229,9 +236,12 @@ def Foxy(level, action):
     global alive, foxystage, power, ldoorpenalty
     
     move = AI(level)
+
+    # Foxy can't move if you're looking at cameras.
     if move:
         foxystage += 1
         if action.lower() == "cams" or action.lower() == "cameras":
+            # if & elif weren't doing the thing they were meant to.
             foxystage -= 1
         
     if foxystage >= 6 and not ldoor:
@@ -245,6 +255,8 @@ def Foxy(level, action):
 #1a,1b,7,6,4a,4b
 def Freddy_Cam_Mov(camera, action):
     global rdoor, fredinhall
+    # freddy doesn't move from your door.
+    # NEED TO ADD CAMERA STALLING
 
     if "Freddy" in cam_4b and not rdoor:
         fredinhall = True
@@ -282,57 +294,72 @@ def Freddy(level):
 def CameraLogic():
     global camera
     # I would love to use a Switch Case statement... but it's introduced in python 3.10
+    # The woes of 3.4.3
+    
     validcam = False
     while not validcam:
         camera = input("1a, 1b, 1c, 2a, 2b, 3, 4a, 4b, 5, 6, 7\n>>> ")
-        
+
+        # Show stage
         if camera == "1a":
             print("Show Stage:" , *cam_1a)
             validcam = True
-            
+
+        # Dining Area
         elif camera == "1b":
             print("Dining Area:" , *cam_1b)
             validcam = True
-            
+
+        # Foxy - Pirate's Cove
         elif camera == "1c":
             print("Pirate Cove: Stage" , foxystage)
             validcam = True
             
+        # West Hall
         elif camera == "2a":
             print("West Hall:" , *cam_2a)
             validcam = True
-            
+
+        # West Hall Corner
         elif camera == "2b":
             print("West Hall Corner:" , *cam_2b)
             validcam = True
-            
+
+        # Supply Closet
         elif camera == "3":
             print("Supply Closet:" , *cam_3)
             validcam = True
-            
+
+        # East Hall
         elif camera == "4a":
             print("East Hall:" , *cam_4a)
             validcam = True
-            
+
+        # East Hall Corner
         elif camera == "4b":
             print("East Hall Corner:" , *cam_4b)
             validcam = True
-            
+
+        # Backstage
         elif camera == "5":
             print("Backstage:" , *cam_5)
             validcam = True
 
+        # Restrooms
         elif camera == "7":
             print("Restrooms:" , *cam_7)
             validcam = True
-            
+
+        # Kitchen - Home of eastereggs
         elif camera == "6":
             print("Kitchen: AUDIO ONLY")
             validcam = True
-            
+
+            # Chica's in the kitchen
             if "Chica" in cam_6:
                 print("You hear the clanging of pots & pans...\n")
 
+            # Mimics freddy's song when he's in there.
             elif "Freddy" in cam_6:
                 print("A faint jingle can be heard...\n")
 
@@ -351,6 +378,7 @@ def CameraLogic():
                     easteregg = random.randint(1,1000)
                     
                     if easteregg < 990:
+                        # Something like a 12% chance.
                         print("... The empty buzzing of the camera is very unsettling...")
                         lb()
 
@@ -360,7 +388,7 @@ def CameraLogic():
                         slow_print_4(" IT'S ME! IT'S ME! IT'S ME! IT'S ME! IT'S ME! IT'S ME! IT'S ME! IT'S ME! IT'S ME! IT'S ME!")
                         for i in range(50):
                             print("IT'S ME! IT'S ME! IT'S ME! IT'S ME! IT'S ME! IT'S ME! IT'S ME! IT'S ME! IT'S ME! IT'S ME! IT'S ME! IT'S ME! IT'S ME! IT'S ME! IT'S ME! IT'S ME! IT'S ME! IT'S ME! IT'S ME! IT'S ME!")
-                        1 / 0 # Ah, a classic /0 error
+                        1 / 0 # Intentional crash. Could do "Raise" but I don't want to.
 
         else:
             print("That is not a valid camera")
@@ -386,18 +414,13 @@ def Office(action):
     
         if action.lower() == "debug:crash":
             raise Exception("An exception was raised due to a debug function.")
+            # Could've done exit()
 
         if action.lower() == "debug:restart":
-            print("Stopping program")
-            time.sleep(2)
-            print("Loading new instance\n")
-            slow_print(". . . . . . . . . . . . ." , 0.2)
-            slow_print_3("\nDone!")
-            time.sleep(3)
-            print("\nClearing screen\n")
-            slow_print(". . . . . . . . . . ." , 0.3)
+            # Useful for testing changes when live editing.
             cls()
             print(os.system("FNaF_1_Python_Redone.py"))
+            # Exit so previous instance doesn't restart once you end instance.
             exit()
             
         elif action.lower() == "cameras" or action.lower() == "cams":
@@ -438,6 +461,11 @@ def Office(action):
                 print("left door closed")
 
 def DoorPenalty():
+# Door penalty is a random chance which grows higher every action for a door to open.
+# it is checked after all the anamatronics are done moving & the player action is done.
+# Foxy when blocked will take a large portion of the penalty for the left door.
+# It will usually open after 1 or 2 more actions.
+    
     global rdoorpenalty, ldoorpenalty, ldoor, rdoor
     if rdoor:
         rdoorpenalty = rdoorpenalty - 1
@@ -462,16 +490,32 @@ def GameState():
         lb()
         # Player Action has priority
         Office(action)
-        # Anamatronic movement
+        
+        # So a random door open won't insta-kill you.
+        Foxy(foxyai, action)
+    
+        # Door check
+        DoorPenalty()
+
+        # Anamatronic movement.
         Bonnie(bonnieai)
         Chica(chicaai)
-        Foxy(foxyai, action)
         Freddy(freddyai)
-        DoorPenalty()
+        
     if alive == False:
         for i in range(15):
             lb()
-            
+
+        # for when you die.
         slow_print_2("You Died...")
-        lb()        
+
+    # Currently unused win condition.
+    else:
+        for i in range(15):
+            lb()
+        slow_print_2("You win!")
+        
+        lb()
+
+# What actually runs.
 Intro()          
